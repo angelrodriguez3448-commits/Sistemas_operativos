@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1758938646 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\algoritmofcfs\main.cpp
+	<iostream>
+	<unistd.h>
+	<cstdlib>
+	<cmath>
+	<stdlib.h>
+	<iomanip>
+	<ctime>
+	<conio.h>
+	"Lista.h"
+	"Proceso.h"
+
+1757803296 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\algoritmofcfs\lista.h
+	<iostream>
+
+1758938338 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\algoritmofcfs\proceso.h
+	<iostream>
+	<cstring>
+	<stdlib.h>
+
