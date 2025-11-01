@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1756668595 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesamientolotes\main.cpp
+	<iostream>
+	<unistd.h>
+	<cstdlib>
+	<cmath>
+	<iomanip>
+	"Lista.h"
+	"Proceso.h"
+
+1756160458 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesamientolotes\lista.h
+	<iostream>
+
+1756668438 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesamientolotes\proceso.h
+	<iostream>
+	<cstring>
+
