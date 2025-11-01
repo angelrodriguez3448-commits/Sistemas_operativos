@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1760914559 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\roundrobin\main.cpp
+	<iostream>
+	<unistd.h>
+	<cstdlib>
+	<cmath>
+	<stdlib.h>
+	<iomanip>
+	<ctime>
+	<conio.h>
+	"Lista.h"
+	"Proceso.h"
+
+1757803296 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\roundrobin\lista.h
+	<iostream>
+
+1761064028 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\roundrobin\proceso.h
+	<iostream>
+	<cstring>
+	<stdlib.h>
+
