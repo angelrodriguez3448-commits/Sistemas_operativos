@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1761789135 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\productor_consumidor\main.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<conio.h>
+	<unistd.h>
+
