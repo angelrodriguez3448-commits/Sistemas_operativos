@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1762050799 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\paginacion_simple\main.cpp
+	<iostream>
+	<unistd.h>
+	<cstdlib>
+	<cmath>
+	<stdlib.h>
+	<iomanip>
+	<ctime>
+	<conio.h>
+	"Lista.h"
+	"Proceso.h"
+	"Marco.h"
+
+1757803296 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\paginacion_simple\lista.h
+	<iostream>
+
+1761958583 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\paginacion_simple\proceso.h
+	<iostream>
+	<cstring>
+	<stdlib.h>
+
+1762050376 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\paginacion_simple\marco.h
+

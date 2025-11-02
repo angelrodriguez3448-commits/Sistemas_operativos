@@ -9,6 +9,7 @@
 #include <conio.h>
 #include "Lista.h"
 #include "Proceso.h"
+#include "Marco.h"
 using namespace std;
 
 void imprimirDatos(Proceso ObjProc){
@@ -100,6 +101,7 @@ void imprimirTiempos(Proceso ObjProc, int TG){
 
 int main(){
     cout << "--Simulador de algoritmo de planificacion Round-Robin--\n\n";
+    Marco Memoria [48][2];
     Lista<Proceso> ListaNuevos;
     Lista<Proceso> ListaListos;
     Lista<Proceso> ListaEjecucion;
@@ -115,12 +117,13 @@ int main(){
     Proceso* PObjProc;
     int Oper, Num1, Num2, Tiemp, Id, Tam;
     Id = 0;
-    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, TiempG, NivelBCP, TiempP, Quantum;
+    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, TiempG, Quantum;
     float ResulProc;
     srand(time(NULL));
     bool BanderaError = false;
     bool BanderaBloqueado = false;
     bool Terminado = false;
+    bool SO;
 
     //Solicitud de procesos
     do{
@@ -133,6 +136,52 @@ int main(){
         cout << "\nIngrese la cantidad de Quantum: ";
         cin >> Quantum;
     } while (Quantum <= 0);
+
+    //Ciclo para rellenar la memoria
+    for(i = 0; i < 2; i++){
+        for(j = 0; j < 24; j++){
+            Id++;
+            if(i == 1 && j >= 20){
+                SO = true;
+            } else{
+                SO = false;
+            }
+            Memoria[j][i] = Marco(Id, SO);
+        }
+    }
+
+    system("cls");
+
+    //Mostrar memoria
+    for(i = 0; i < 2; i++){
+        for(j = 0; j < 24; j++){
+            cout << left << setw(4) <<Memoria[j][i].RegresarIdMarco();
+            for(int k = 0; k < Memoria[j][i].RegresarCamposO(); k++){
+                cout << "* ";
+            };
+            for(int k = 0; k < Memoria[j][i].RegresarCamposV(); k++){
+                cout << "_ ";
+            };
+            if(Memoria[j][i].RegresarSO() == true){
+                cout << "S.O. ";
+            } else{
+                if(Memoria[j][i].RegresarIdProc() == 0){
+                    cout << left << setw(6) << "NULL";
+                } else{
+                    cout << left << setw(6) << Memoria[j][i].RegresarIdProc();
+                }
+                if(Memoria[j][i].RegresarEstadoProc() == 'X'){
+                    cout << left << setw(6) << "NULL";
+                } else{
+                    cout << left << setw(6) << Memoria[j][i].RegresarEstadoProc();
+                }
+            }
+            cout << "\n";
+        }
+    }
+    system("pause");
+
+    Id = 0;
 
     //Ciclo para rellenar la lista de procesos
     for (i = 1; i <= NumProcs; i++){
@@ -158,7 +207,6 @@ int main(){
     ProcR = NumProcs;
     ProcTer = 0;
     TiempG = 0;
-    TiempP = 0;
     EspaciosLL = 0;
     EspaciosVas = 4;
 
@@ -234,7 +282,6 @@ int main(){
             case 6:
                 //Mostrar tabla BCP
                 system("cls");
-                 NivelBCP = 0;
                 cout << "Pausa, pulsa C para continuar\n";
                 cout << left << setw(4)  << "ID"
                         << setw(11) << "Operacion"
