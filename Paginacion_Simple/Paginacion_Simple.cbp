@@ -33,6 +33,7 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="Lista.h" />
+		<Unit filename="Marco.h" />
 		<Unit filename="Proceso.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>

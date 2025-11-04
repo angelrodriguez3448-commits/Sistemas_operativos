@@ -18,26 +18,26 @@ public:
     ~Marco();
 
     //Metodos para el manejo de atributos
-    int RegresarIdMarco();
+    int RegresaIdMarco();
     void CambiarIdMarco(int);
-    int RegresarCamposV();
+    int RegresaCamposV();
     void CambiarCamposV(int);
-    int RegresarCamposO();
+    int RegresaCamposO();
     void CambiarCamposO(int);
-    int RegresarIdProc();
+    int RegresaIdProc();
     void CambiarIdProc(int);
-    char RegresarEstadoProc();
+    char RegresaEstadoProc();
     void CambiarEstadoProc(char);
-    bool RegresarSO();
+    bool RegresaSO();
     void CambiarSO(bool);
 };
 
-// Declaración del método constructor por omisión
+// Declaraciï¿½n del mï¿½todo constructor por omisiï¿½n
 Marco::Marco() {
-    //Constructor vacío
+    //Constructor vacï¿½o
 }
 
-// Declaración del método constructor con parámetros
+// Declaraciï¿½n del mï¿½todo constructor con parï¿½metros
 Marco::Marco(int Id, bool So) {
     IdMarco = Id;
     CamposV = 5;
@@ -47,67 +47,67 @@ Marco::Marco(int Id, bool So) {
     SO = So;
 }
 
-// Declaración del método destructor
+// Declaraciï¿½n del mï¿½todo destructor
 Marco::~Marco() {
-    //Destructor vacío
+    //Destructor vacï¿½o
 }
 
-//Método para regresar el valor del atributo IdMarco
-int Marco::RegresarIdMarco() {
+//Mï¿½todo para regresar el valor del atributo IdMarco
+int Marco::RegresaIdMarco() {
     return IdMarco;
 }
 
-//Método para cambiar el valor del atributo IdMarco
+//Mï¿½todo para cambiar el valor del atributo IdMarco
 void Marco::CambiarIdMarco(int id){
     IdMarco = id;
 }
 
-//Método para regresar el valor del atributo CamposV
-int Marco::RegresarCamposV() {
+//Mï¿½todo para regresar el valor del atributo CamposV
+int Marco::RegresaCamposV() {
     return CamposV;
 }
 
-//Método para cambiar el valor del atributo CamposV
+//Mï¿½todo para cambiar el valor del atributo CamposV
 void Marco::CambiarCamposV(int campos) {
     CamposV = campos;
 }
 
-//Método para regresar el valor del atributo CamposO
-int Marco::RegresarCamposO() {
+//Mï¿½todo para regresar el valor del atributo CamposO
+int Marco::RegresaCamposO() {
     return CamposO;
 }
 
-//Método para cambiar el valor del atributo CamposO
+//Mï¿½todo para cambiar el valor del atributo CamposO
 void Marco::CambiarCamposO(int campos) {
     CamposO = campos;
 }
 
-//Método para regresar el valor del atributo IdProc
-int Marco::RegresarIdProc() {
+//Mï¿½todo para regresar el valor del atributo IdProc
+int Marco::RegresaIdProc() {
     return IdProc;
 }
 
-//Método para cambiar el valor del atributo
+//Mï¿½todo para cambiar el valor del atributo
 void Marco::CambiarIdProc(int id) {
     IdProc = id;
 }
 
-//Método para regresar el valor del atributo EstadoProc
-char Marco::RegresarEstadoProc() {
+//Mï¿½todo para regresar el valor del atributo EstadoProc
+char Marco::RegresaEstadoProc() {
     return EstadoProc;
 }
 
-//Método para cambiar el valor del atributo
+//Mï¿½todo para cambiar el valor del atributo
 void Marco::CambiarEstadoProc(char estado) {
     EstadoProc = estado;
 }
 
-//Método para regresar el valor del atributo
-bool Marco::RegresarSO() {
+//Mï¿½todo para regresar el valor del atributo
+bool Marco::RegresaSO() {
     return SO;
 }
 
-//Método para cambiar el valor del atributo
+//Mï¿½todo para cambiar el valor del atributo
 void Marco::CambiarSO(bool so) {
     SO = so;
 }

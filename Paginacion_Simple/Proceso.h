@@ -1,4 +1,4 @@
-// Definición de la clase Proceso. Se sobrecargan algunos operadores
+// Definiciï¿½n de la clase Proceso. Se sobrecargan algunos operadores
 // para que objetos de esta clase puedan ser usados de manera directa.
 // Esta clase se guarda en la biblioteca "Proceso.h"
 
@@ -16,6 +16,8 @@ private:
     int Numero2;
     int Tiempo;
     int Tamanio;
+    int Paginas;
+    int UltimaPagi; //Variable para indicar cuanto espacio ocupara la ultima pagina
     int TiempoTrans;
     int TiempoBloq;
     int TiempoLlega;
@@ -43,6 +45,10 @@ public:
     void CambiarID(int);
     int RegresaTamanio();
     void CambiarTamanio(int);
+    int RegresaPaginas();
+    void CambiarPaginas(int);
+    int RegresaUltimaPagi();
+    void CambiarUltimaPagi(int);
     bool RegresaError();
     void CambiarError(bool);
     void CambiarTiempoB(int);
@@ -66,12 +72,12 @@ public:
     friend ostream& operator << (ostream&, Proceso&);
 };
 
-// Declaración del método constructor por omisión
+// Declaraciï¿½n del mï¿½todo constructor por omisiï¿½n
 Proceso::Proceso() {
-    // Constructor vacío
+    // Constructor vacï¿½o
 }
 
-// Declaración del método constructor con parámetros
+// Declaraciï¿½n del mï¿½todo constructor con parï¿½metros
 Proceso::Proceso(int Oper, int Num1,  int Num2, int Tiemp, int Id, int Tam) {
     Operador = Oper;
     Numero1 = Num1;
@@ -79,6 +85,13 @@ Proceso::Proceso(int Oper, int Num1,  int Num2, int Tiemp, int Id, int Tam) {
     Tiempo = Tiemp;
     ID = Id;
     Tamanio = Tam;
+    Paginas = (Tam / 5);
+    if ((Tam % 5) != 0){
+        Paginas = Paginas + 1;
+        UltimaPagi = Tam % 5;
+    } else{
+        UltimaPagi = 5;
+    }
     TiempoLlega = -1;
     TiempoTrans = 0;
     TiempoBloq = 0;
@@ -87,7 +100,7 @@ Proceso::Proceso(int Oper, int Num1,  int Num2, int Tiemp, int Id, int Tam) {
     TiempoQ = 0;
 }
 
-// Declaración del método destructor
+// Declaraciï¿½n del mï¿½todo destructor
 Proceso::~Proceso(){
     // Destructor vacio
 }
@@ -97,7 +110,7 @@ int Proceso::RegresaOperador() {
     return Operador;
 }
 
-// Método que regresa el valor de alguno de los atributos Numero
+// Mï¿½todo que regresa el valor de alguno de los atributos Numero
 int Proceso::RegresaNumero(int indice) {
     if (indice == 1)
         return Numero1;
@@ -138,6 +151,26 @@ int Proceso::RegresaTamanio() {
 //Metodo que cambia el valor del atributo Tamanio
 void Proceso::CambiarTamanio(int tamanio){
     Tamanio = tamanio;
+}
+
+//Metodo que regresa el valor del atributo Paginas
+int Proceso::RegresaPaginas() {
+    return Paginas;
+}
+
+//Metodo que cambia el valor del atributo Paginas
+void Proceso::CambiarPaginas(int paginas){
+    Paginas = paginas;
+}
+
+//Metodo que regresa el valor del atributo UltimaPagi
+int Proceso::RegresaUltimaPagi() {
+    return UltimaPagi;
+}
+
+//Metodo que cambia el valor del atributo UltimaPagi
+void Proceso::CambiarUltimaPagi(int ultimaPagi) {
+    UltimaPagi = ultimaPagi;
 }
 
 //Metodo que regresa el valor del atributo Error
@@ -210,22 +243,22 @@ void Proceso::CambiarBloq(bool bloq){
     Bloqueo = bloq;
 }
 
-// Método para comparar si un producto es mayor que otro (clave)
+// Mï¿½todo para comparar si un producto es mayor que otro (clave)
 int Proceso::operator > (Proceso Proc) {
     return ID > Proc.ID;
 }
 
-// Método para comparar si un producto es menor que otro (clave)
+// Mï¿½todo para comparar si un producto es menor que otro (clave)
 int Proceso::operator < (Proceso Proc) {
     return ID < Proc.ID;
 }
 
-// Método para comparar si dos procesos son iguales (ID)
+// Mï¿½todo para comparar si dos procesos son iguales (ID)
 int Proceso::operator == (Proceso Proc) {
     return ID == Proc.ID;
 }
 
-//Método que permite comparar dos procesos para determinar si son distintos.
+//Mï¿½todo que permite comparar dos procesos para determinar si son distintos.
 int Proceso::operator != (Proceso Proc)
 {
     int Resp = 0;
@@ -233,7 +266,7 @@ int Proceso::operator != (Proceso Proc)
     return Resp;
 }
 
-// Sobrecarga del operador << para permitir impresión con cout
+// Sobrecarga del operador << para permitir impresiï¿½n con cout
 ostream& operator << (ostream& Escribe, Proceso& ObjProc) {
     Escribe << "\n\nDatos del proceso\n";
     Escribe << "ID del proceso: " << ObjProc.ID;

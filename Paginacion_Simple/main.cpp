@@ -99,9 +99,99 @@ void imprimirTiempos(Proceso ObjProc, int TG){
     cout << "\n";
 }
 
+//Funcion para imprimir la memoria
+void ImprimirMemoria(Marco Memoria[24][2]){
+    for(int i = 0; i < 2; i++){
+        for(int j = 0; j < 24; j++){
+            cout << left << setw(4) <<Memoria[j][i].RegresaIdMarco();
+            for(int k = 0; k < Memoria[j][i].RegresaCamposO(); k++){
+                cout << "* ";
+            };
+            for(int k = 0; k < Memoria[j][i].RegresaCamposV(); k++){
+                cout << "_ ";
+            };
+            if(Memoria[j][i].RegresaSO() == true){
+                cout << "S.O. ";
+            } else{
+                if(Memoria[j][i].RegresaIdProc() == 0){
+                    cout << left << setw(6) << "NULL";
+                } else{
+                    cout << left << setw(6) << Memoria[j][i].RegresaIdProc();
+                }
+                if(Memoria[j][i].RegresaEstadoProc() == 'X'){
+                    cout << left << setw(6) << "NULL";
+                } else{
+                    cout << left << setw(6) << Memoria[j][i].RegresaEstadoProc();
+                }
+            }
+            cout << "\n";
+        }
+    }
+}
+
+//Funcion para asignar marcos
+bool AsignarPaginas(Marco Memoria[24][2], Proceso &proc){
+    int paginasNecesarias = proc.RegresaPaginas();
+    int paginasAsignadas = 0;
+
+    //Recorrer la memoria para asignar marcos
+    for(int i = 0; i < 2 && paginasAsignadas < paginasNecesarias; i++){
+        for(int j = 0; j < 24 && paginasAsignadas < paginasNecesarias; j++){
+
+            //Se selecciona solo los marcos que no tengan asignado SO y un IdProc == 0
+            if(Memoria[j][i].RegresaSO() != true && Memoria[j][i].RegresaIdProc() == 0){
+                Memoria[j][i].CambiarIdProc(proc.RegresaID());
+                Memoria[j][i].CambiarEstadoProc('L');
+                paginasAsignadas++;
+
+                //Asignar el tamaño de campos ocupados y vacios
+                if(paginasAsignadas == paginasNecesarias){
+                    Memoria[j][i].CambiarCamposO(proc.RegresaUltimaPagi());
+                    Memoria[j][i].CambiarCamposV(5 - proc.RegresaUltimaPagi());
+                } else{
+                    Memoria[j][i].CambiarCamposO(5);
+                    Memoria[j][i].CambiarCamposV(0);
+                }
+            }
+        }
+    }
+
+    //Si ya se asignaron todos los marcos necesarios retornar true, sino revertir los cambios y retornar false
+    if(paginasAsignadas == paginasNecesarias){
+        return true;
+    } else{
+        for(int i = 0; i < 2; i++){
+            for(int j = 0; j < 24; j++){
+                if(!Memoria[j][i].RegresaSO() && Memoria[j][i].RegresaIdProc() == proc.RegresaID()){
+                    Memoria[j][i].CambiarIdProc(0);
+                    Memoria[j][i].CambiarEstadoProc('X');
+                    Memoria[j][i].CambiarCamposO(0);
+                    Memoria[j][i].CambiarCamposV(5);
+                }
+            }
+        }
+        return false;
+    }
+}
+
+//Funcion para liberar marcos asginados a un proceso
+void LiberarPaginas(Marco Memoria[24][2], int procID){
+    //Recorrer la memoria para liberar marcos
+    for(int i = 0; i < 2; i++){
+        for(int j = 0; j < 24; j++){
+            if(Memoria[j][i].RegresaIdProc() == procID){
+                Memoria[j][i].CambiarIdProc(0);
+                Memoria[j][i].CambiarEstadoProc('X');
+                Memoria[j][i].CambiarCamposO(0);
+                Memoria[j][i].CambiarCamposV(5);
+            }
+        }
+    }
+}
+
 int main(){
-    cout << "--Simulador de algoritmo de planificacion Round-Robin--\n\n";
-    Marco Memoria [48][2];
+    cout << "--Simulador de paginacion simple--\n\n";
+    Marco Memoria [24][2];
     Lista<Proceso> ListaNuevos;
     Lista<Proceso> ListaListos;
     Lista<Proceso> ListaEjecucion;
@@ -117,9 +207,10 @@ int main(){
     Proceso* PObjProc;
     int Oper, Num1, Num2, Tiemp, Id, Tam;
     Id = 0;
-    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, TiempG, Quantum;
+    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, PagN, TiempG, Quantum;
     float ResulProc;
     srand(time(NULL));
+    bool NuevoVacio;
     bool BanderaError = false;
     bool BanderaBloqueado = false;
     bool Terminado = false;
@@ -137,49 +228,22 @@ int main(){
         cin >> Quantum;
     } while (Quantum <= 0);
 
-    //Ciclo para rellenar la memoria
+    //Ciclo para rellenar la memoria con marcos vacios
     for(i = 0; i < 2; i++){
         for(j = 0; j < 24; j++){
-            Id++;
             if(i == 1 && j >= 20){
                 SO = true;
             } else{
                 SO = false;
             }
             Memoria[j][i] = Marco(Id, SO);
+            Id++;
         }
     }
 
     system("cls");
 
-    //Mostrar memoria
-    for(i = 0; i < 2; i++){
-        for(j = 0; j < 24; j++){
-            cout << left << setw(4) <<Memoria[j][i].RegresarIdMarco();
-            for(int k = 0; k < Memoria[j][i].RegresarCamposO(); k++){
-                cout << "* ";
-            };
-            for(int k = 0; k < Memoria[j][i].RegresarCamposV(); k++){
-                cout << "_ ";
-            };
-            if(Memoria[j][i].RegresarSO() == true){
-                cout << "S.O. ";
-            } else{
-                if(Memoria[j][i].RegresarIdProc() == 0){
-                    cout << left << setw(6) << "NULL";
-                } else{
-                    cout << left << setw(6) << Memoria[j][i].RegresarIdProc();
-                }
-                if(Memoria[j][i].RegresarEstadoProc() == 'X'){
-                    cout << left << setw(6) << "NULL";
-                } else{
-                    cout << left << setw(6) << Memoria[j][i].RegresarEstadoProc();
-                }
-            }
-            cout << "\n";
-        }
-    }
-    system("pause");
+    ImprimirMemoria(Memoria);
 
     Id = 0;
 
@@ -202,13 +266,14 @@ int main(){
         Proceso ObjProc(Oper, Num1, Num2, Tiemp, Id, Tam);
         ListaNuevos.InsertaOrdenCrec(ObjProc);
     }
+    NuevoVacio = false;
 
     AuxiliarListos = ListaNuevos.RegresaPrimero();
     ProcR = NumProcs;
     ProcTer = 0;
     TiempG = 0;
     EspaciosLL = 0;
-    EspaciosVas = 4;
+    EspaciosVas = 44; //44 espacios disponibles en memoria para procesos
 
 
     //Ciclo principal
@@ -361,29 +426,46 @@ int main(){
         system("cls");
 
         //Hace una lista auxiliar para porcesos listos
-        if (ListaNuevos.RegresaPrimero() != NULL){
+        if (NuevoVacio != true){
             AuxiliarListos = ListaNuevos.RegresaPrimero();
-            while (EspaciosLL < 4 ){
+            while (EspaciosLL < 44){
                 PObjProc = AuxiliarListos->RegresaApun();
                 PObjProc->CambiarTiempoLl(TiempG);
                 ObjProc = AuxiliarListos->RegresaInfo();
-                ListaListos.InsertaOrdenCrec(ObjProc);
-                EspaciosLL++;
-                EspaciosVas--;
+
+                if(AsignarPaginas(Memoria, ObjProc)){
+                    //Si se asignaron las paginas correctamente
+                    ListaListos.InsertaOrdenCrec(ObjProc);
+                    EspaciosLL = ObjProc.RegresaPaginas() + EspaciosLL;
+                    EspaciosVas = EspaciosVas - ObjProc.RegresaPaginas();
+                    ProcR--;
+                } else{
+                    break; //Salir del ciclo si no se pudieron asignar las paginas
+                }
+
                 if (AuxiliarListos->RegresaLiga() == NULL){
-                    EspaciosLL = 4;
+                    EspaciosLL = 44; //Para salir del ciclo si ya no hay mas procesos
+                    NuevoVacio = true;
                 } else {
                     AuxiliarListos = AuxiliarListos->RegresaLiga();
                 }
+
                 ListaNuevos.EliminaUnNodo(ObjProc);
-                ProcR--;
+
+                if (ListaNuevos.RegresaPrimero() != NULL){
+                    PagN = ListaNuevos.RegresaPrimero()->RegresaInfo().RegresaPaginas();
+                } else{
+                    PagN = 0;
+                }
             }
             AuxiliarListos = ListaListos.RegresaPrimero();
             AuxiliarEjec = ListaListos.RegresaPrimero();
-            if ((4 - EspaciosLL) != EspaciosVas){
+            if ((44 - EspaciosLL) != EspaciosVas){
                 EspaciosLL = EspaciosLL - EspaciosVas;
             }
         }
+
+        ImprimirMemoria(Memoria);
 
         AuxiliarListos = ListaListos.RegresaPrimero();
         //Recorrer apuntador
@@ -405,6 +487,9 @@ int main(){
         }
 
         cout << "\nProcesos en cola de Nuevos: " << ProcR;
+        if (PagN != 0){
+            cout << "\tNum de paginas del proximo proceso: " << PagN;
+        }
         //Procesos Listos
         cout << "\nCola de listos\n";
         while(AuxiliarListos != NULL && AuxiliarEjec->RegresaLiga() != NULL){
@@ -557,7 +642,8 @@ int main(){
 
         cout << "\nContador global: " << TiempG;
         cout << "\n";
-        sleep(1);
+        //system("pause");
+        sleep(4);
 
     }while(Terminado == false);
     system("pause");
