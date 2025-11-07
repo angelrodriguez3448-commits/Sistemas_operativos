@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <ctime>
 #include <conio.h>
+#include <vector>
 #include "Lista.h"
 #include "Proceso.h"
 #include "Marco.h"
@@ -112,6 +113,7 @@ void ImprimirMemoria(Marco Memoria[24][2]){
             };
             if(Memoria[j][i].RegresaSO() == true){
                 cout << "S.O. ";
+                cout << left << setw(8) << " ";
             } else{
                 if(Memoria[j][i].RegresaIdProc() == 0){
                     cout << left << setw(6) << "NULL";
@@ -124,7 +126,11 @@ void ImprimirMemoria(Marco Memoria[24][2]){
                     cout << left << setw(6) << Memoria[j][i].RegresaEstadoProc();
                 }
             }
-            cout << "\n";
+            if((j % 2) == 1){
+                cout << "\n";
+            } else {
+                cout << "\t";
+            }
         }
     }
 }
@@ -185,6 +191,37 @@ void LiberarPaginas(Marco Memoria[24][2], int procID){
                 Memoria[j][i].CambiarCamposO(0);
                 Memoria[j][i].CambiarCamposV(5);
             }
+        }
+    }
+}
+
+void BuscarEnMemoria(Marco Memoria[24][2], int procID, int Ubicacion[][2], int paginas){
+    int i, j;
+    for(i = 0; i < 2; i++){
+        for(j = 0; j <paginas; j++){
+            Ubicacion[j][i] = -1;
+        }
+    }
+    int matPosY = 0;
+    for(i = 0; i < 2; i++){
+        for(j = 0; j < 24; j++){
+            if(Memoria[j][i].RegresaIdProc() == procID){
+                Ubicacion[matPosY][0] = j;
+                Ubicacion[matPosY][1] = i;
+                matPosY++;
+            }
+        }
+    }
+    return;
+}
+
+void CambiarEstadoM(Marco Memoria[24][2], int Ubicacion[][2], int paginas, char estado){
+    for(int k = 0; k < paginas; k++){
+        int fila = Ubicacion[k][0];
+        int col = Ubicacion[k][1];
+
+        if (fila != -1 && col != -1){
+            Memoria[fila][col].CambiarEstadoProc(estado);
         }
     }
 }
@@ -465,8 +502,6 @@ int main(){
             }
         }
 
-        ImprimirMemoria(Memoria);
-
         AuxiliarListos = ListaListos.RegresaPrimero();
         //Recorrer apuntador
         if(AuxiliarListos != NULL){
@@ -490,18 +525,9 @@ int main(){
         if (PagN != 0){
             cout << "\tNum de paginas del proximo proceso: " << PagN;
         }
-        //Procesos Listos
-        cout << "\nCola de listos\n";
-        while(AuxiliarListos != NULL && AuxiliarEjec->RegresaLiga() != NULL){
-            ObjProc = AuxiliarListos->RegresaInfo();
-            cout << "\nID: " << ObjProc.RegresaID();
-            cout << "\tTME: " << ObjProc.RegresaTiempo();
-            cout << "\tT Transcurrido: " << ObjProc.RegresaTiempoTrans();
-            AuxiliarListos = AuxiliarListos->RegresaLiga();
-        };
 
         //Impresion del proceso en ejecucion
-        cout << "\n\nPorceso en ejecucion\n";
+        cout << "\nPorceso en ejecucion\n";
         if (Terminado != true && AuxiliarEjec != NULL){
             ObjProc = AuxiliarEjec->RegresaInfo();
             PObjProc = AuxiliarEjec->RegresaApun();
@@ -513,7 +539,8 @@ int main(){
                 if (BanderaError == true){
                     PObjProc->CambiarError(BanderaError);
                     BanderaError = false;
-                    //PObjProc->CambiarTiempo(PObjProc->RegresaTiempo());
+
+                    LiberarPaginas(Memoria, ObjProc.RegresaID());
                 }
 
                 if (PObjProc->RegresaTiempoTrans() < PObjProc->RegresaTiempo() && PObjProc->RegresaError() != true){
@@ -523,6 +550,11 @@ int main(){
 
                     //Caso por si se ordena un cambio de proceso
                     if (BanderaBloqueado != true){
+                        // Buscar las paginas del proceso en ejecucion para cambiar su estado
+                        int ubicacion[PObjProc->RegresaPaginas()][2];
+                        BuscarEnMemoria(Memoria, ObjProc.RegresaID(), ubicacion, ObjProc.RegresaPaginas());
+                        CambiarEstadoM(Memoria, ubicacion, ObjProc.RegresaPaginas(), 'E');
+
                         cout << *PObjProc;
                         cout << "\tTamanio: " << PObjProc->RegresaTamanio();
                         cout << "\tTiempo transcurrido: " << PObjProc->RegresaTiempoTrans() << "\n";
@@ -534,6 +566,12 @@ int main(){
                     } else{ //Cambio de contexto a bloqueado
                         ObjSig = AuxiliarEjec->RegresaLiga();
                         ObjProc = AuxiliarEjec->RegresaInfo();
+
+                        // Buscar las paginas del proceso en ejecucion para cambiar su estado
+                        int ubicacion[PObjProc->RegresaPaginas()][2];
+                        BuscarEnMemoria(Memoria, ObjProc.RegresaID(), ubicacion, ObjProc.RegresaPaginas());
+                        CambiarEstadoM(Memoria, ubicacion, ObjProc.RegresaPaginas(), 'B');
+
                         ListaListos.EliminaUnNodo(ObjProc);
                         ListaBloqueados.InsertaFinal(ObjProc);
                         if(ObjSig != NULL){
@@ -551,6 +589,9 @@ int main(){
                     PObjProc->CambiarTiempoF(TiempG);
                     ObjSig = AuxiliarEjec->RegresaLiga();
                     ObjProc = AuxiliarEjec->RegresaInfo();
+
+                    LiberarPaginas(Memoria, ObjProc.RegresaID());
+
                     ListaListos.EliminaUnNodo(ObjProc);
                     ListaTerminados.InsertaFinal(ObjProc);
                     if (ObjSig != NULL){
@@ -559,10 +600,16 @@ int main(){
                         AuxiliarEjec = ListaListos.RegresaPrimero();
                     }
                 }
-            } else {
+            } else { //Se acabo el quantum
                 PObjProc->CambiarTiempoQ(0);
                 ObjSig = AuxiliarEjec->RegresaLiga();
                 ObjProc = AuxiliarEjec->RegresaInfo();
+
+                // Buscar las paginas del proceso en ejecucion para cambiar su estado
+                int ubicacion[PObjProc->RegresaPaginas()][2];
+                BuscarEnMemoria(Memoria, ObjProc.RegresaID(), ubicacion, ObjProc.RegresaPaginas());
+                CambiarEstadoM(Memoria, ubicacion, ObjProc.RegresaPaginas(), 'L');
+
                 ListaListos.EliminaUnNodo(ObjProc);
                 ListaListos.InsertaFinal(ObjProc);
                 if(ObjSig != NULL){
@@ -574,26 +621,31 @@ int main(){
         }
 
         //Procesos bloqueados
-        cout << "\nProcesos bloqueados\n";
         if(ListaBloqueados.RegresaPrimero() != NULL){
             AuxiliarBloq = ListaBloqueados.RegresaPrimero();
 
             while(AuxiliarBloq != NULL){
                 PObjProc = AuxiliarBloq->RegresaApun();
-                cout << "ID: " << PObjProc->RegresaID() << "\t";
-                cout << "Tiempo Bloqueado: " << PObjProc->RegresaTiempoB() << "\n";
                 PObjProc->CambiarTiempoB(PObjProc->RegresaTiempoB() + 1);
 
                 ObjSig = AuxiliarBloq->RegresaLiga();
                 if(PObjProc->RegresaTiempoB() > 8){
                     PObjProc->CambiarTiempoB(0);
                     ObjProc = AuxiliarBloq->RegresaInfo();
+
+                    // Buscar las paginas del proceso en ejecucion para cambiar su estado
+                    int ubicacion[PObjProc->RegresaPaginas()][2];
+                    BuscarEnMemoria(Memoria, ObjProc.RegresaID(), ubicacion, ObjProc.RegresaPaginas());
+                    CambiarEstadoM(Memoria, ubicacion, ObjProc.RegresaPaginas(), 'L');
+
                     ListaBloqueados.EliminaUnNodo(ObjProc);
                     ListaListos.InsertaFinal(ObjProc);
                 }
                 AuxiliarBloq = ObjSig;
             }
         }
+
+        ImprimirMemoria(Memoria);
 
         //Procesos terminados
         cout << "\nProcesos terminados: " << ProcTer;

@@ -268,7 +268,7 @@ int Proceso::operator != (Proceso Proc)
 
 // Sobrecarga del operador << para permitir impresi�n con cout
 ostream& operator << (ostream& Escribe, Proceso& ObjProc) {
-    Escribe << "\n\nDatos del proceso\n";
+    Escribe << "\nDatos del proceso\n";
     Escribe << "ID del proceso: " << ObjProc.ID;
     Escribe << "\tOperacion: " << ObjProc.Numero1;
     switch(ObjProc.Operador){
