@@ -98,6 +98,8 @@ Proceso::Proceso(int Oper, int Num1,  int Num2, int Tiemp, int Id, int Tam) {
     TiempoRes = -1;
     TiempoFin = 0;
     TiempoQ = 0;
+    Error = false;
+    Bloqueo =  false;
 }
 
 // Declaraci�n del m�todo destructor

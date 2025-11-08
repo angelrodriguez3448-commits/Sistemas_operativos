@@ -102,6 +102,22 @@ void imprimirTiempos(Proceso ObjProc, int TG){
 
 //Funcion para imprimir la memoria
 void ImprimirMemoria(Marco Memoria[24][2]){
+    cout << "\n";
+    //Encabezado de la memoria
+    for (int i = 0; i < 2; i ++){
+        cout << left << setw(4) << "IdM";
+        cout << left << setw(10) << "EspacioM";
+        cout << left << setw(6) << "IdP";
+        cout << left << setw(6) << "N_Pag";
+        cout << left << setw(6) << "Estado";
+        if(i == 0){
+            cout << "\t";
+        } else{
+            cout << "\n";
+        }
+    }
+
+    //Contenido de la memoria
     for(int i = 0; i < 2; i++){
         for(int j = 0; j < 24; j++){
             cout << left << setw(4) <<Memoria[j][i].RegresaIdMarco();
@@ -113,13 +129,24 @@ void ImprimirMemoria(Marco Memoria[24][2]){
             };
             if(Memoria[j][i].RegresaSO() == true){
                 cout << "S.O. ";
-                cout << left << setw(8) << " ";
+                cout << left << setw(13) << " ";
             } else{
+
+                //Confirmar si el marco tiene un ID de proceso asignado
                 if(Memoria[j][i].RegresaIdProc() == 0){
                     cout << left << setw(6) << "NULL";
                 } else{
                     cout << left << setw(6) << Memoria[j][i].RegresaIdProc();
                 }
+
+                //Confirmar si el marco tiene un Num de paginas asignado
+                if(Memoria[j][i].RegresaPagina() == 0){
+                    cout << left << setw(6) << "NULL";
+                } else{
+                    cout << left << setw(6) << Memoria[j][i].RegresaPagina();
+                }
+
+                //Confirmar si el marco tiene un Num de paginas asignado
                 if(Memoria[j][i].RegresaEstadoProc() == 'X'){
                     cout << left << setw(6) << "NULL";
                 } else{
@@ -149,6 +176,7 @@ bool AsignarPaginas(Marco Memoria[24][2], Proceso &proc){
                 Memoria[j][i].CambiarIdProc(proc.RegresaID());
                 Memoria[j][i].CambiarEstadoProc('L');
                 paginasAsignadas++;
+                Memoria[j][i].CambiarPagina(paginasAsignadas);
 
                 //Asignar el tamaño de campos ocupados y vacios
                 if(paginasAsignadas == paginasNecesarias){
@@ -173,6 +201,7 @@ bool AsignarPaginas(Marco Memoria[24][2], Proceso &proc){
                     Memoria[j][i].CambiarEstadoProc('X');
                     Memoria[j][i].CambiarCamposO(0);
                     Memoria[j][i].CambiarCamposV(5);
+                    Memoria[j][i].CambiarPagina(0);
                 }
             }
         }
@@ -190,6 +219,7 @@ void LiberarPaginas(Marco Memoria[24][2], int procID){
                 Memoria[j][i].CambiarEstadoProc('X');
                 Memoria[j][i].CambiarCamposO(0);
                 Memoria[j][i].CambiarCamposV(5);
+                Memoria[j][i].CambiarPagina(0);
             }
         }
     }
@@ -212,7 +242,6 @@ void BuscarEnMemoria(Marco Memoria[24][2], int procID, int Ubicacion[][2], int p
             }
         }
     }
-    return;
 }
 
 void CambiarEstadoM(Marco Memoria[24][2], int Ubicacion[][2], int paginas, char estado){
@@ -242,9 +271,9 @@ int main(){
     NodoLista<Proceso>* ObjSig;
     Proceso ObjProc;
     Proceso* PObjProc;
-    int Oper, Num1, Num2, Tiemp, Id, Tam;
+    int Oper, Num1, Num2, Tiemp, Id, Tam; //Variables para la creacion de procesos
     Id = 0;
-    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, PagN, TiempG, Quantum;
+    int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, IdN, PagN, TiempG, Quantum; //Variables usadas en el ciclo principal
     float ResulProc;
     srand(time(NULL));
     bool NuevoVacio;
@@ -299,7 +328,7 @@ int main(){
         Id++;
         do{
             Tam = rand() %31; //Genera valores del 0 al 30
-        } while(Tam < 5); //Valida que el Tamanio no sea menor a 6
+        } while(Tam <= 5); //Valida que el Tamanio no sea menor a 6
         Proceso ObjProc(Oper, Num1, Num2, Tiemp, Id, Tam);
         ListaNuevos.InsertaOrdenCrec(ObjProc);
     }
@@ -332,6 +361,8 @@ int main(){
                 interrupcion = 5;
             } else if(tecla == 'b' || tecla == 'B'){
                 interrupcion = 6;
+            } else if(tecla == 't' || tecla == 'T'){
+                interrupcion = 7;
             }
 
             //Switch para evaluar interrupciones
@@ -365,6 +396,7 @@ int main(){
                 //Crear nuevo proceso
                 NumProcs++;
                 ProcR++;
+                NuevoVacio = false;
                 //cout << EspaciosLL;
                 do{
                     Oper = rand() % 7; //Genera valores del 0 al 6
@@ -377,6 +409,9 @@ int main(){
                     Tiemp = rand() % 21; //Genera valores del 0 al 20
                 } while(Tiemp < 4); //Valida que el TME no sea menor a 5
                 Id++;
+                do{
+                    Tam = rand() %31; //Genera valores del 0 al 30
+                } while(Tam <= 5); //Valida que el Tamanio no sea menor a 6
                 Proceso ObjProc(Oper, Num1, Num2, Tiemp, Id, Tam);
                 ListaNuevos.InsertaOrdenCrec(ObjProc);
                 break;
@@ -456,6 +491,22 @@ int main(){
                     }
                 }while(interrupcion != 4);
                 break;
+            case 7:
+                //Mostrar tabla de paginas
+                system("cls");
+                cout << "Pausa, pulsa C para continuar\n";
+                ImprimirMemoria(Memoria);
+                //Verifica si se preciono C para continuar con la ejecucion
+                do{
+                    if(kbhit() != 0){
+                        char tecla = getch();
+                        interrupcion = 0;
+                        if(tecla == 'c' || tecla == 'C'){
+                            interrupcion = 4;
+                        }
+                    }
+                }while(interrupcion != 4);
+                break;
             }
             interrupcion = 0;
         }
@@ -488,17 +539,18 @@ int main(){
                 }
 
                 ListaNuevos.EliminaUnNodo(ObjProc);
-
-                if (ListaNuevos.RegresaPrimero() != NULL){
-                    PagN = ListaNuevos.RegresaPrimero()->RegresaInfo().RegresaPaginas();
-                } else{
-                    PagN = 0;
-                }
             }
             AuxiliarListos = ListaListos.RegresaPrimero();
             AuxiliarEjec = ListaListos.RegresaPrimero();
             if ((44 - EspaciosLL) != EspaciosVas){
                 EspaciosLL = EspaciosLL - EspaciosVas;
+            }
+            if (ListaNuevos.RegresaPrimero() != NULL){
+                IdN = ListaNuevos.RegresaPrimero()->RegresaInfo().RegresaID();
+                PagN = ListaNuevos.RegresaPrimero()->RegresaInfo().RegresaPaginas();
+            } else{
+                IdN = 0;
+                PagN = 0;
             }
         }
 
@@ -522,8 +574,9 @@ int main(){
         }
 
         cout << "\nProcesos en cola de Nuevos: " << ProcR;
-        if (PagN != 0){
-            cout << "\tNum de paginas del proximo proceso: " << PagN;
+        if (IdN != 0){
+            cout << "\tId del proximo nuevo proceso: " << IdN;
+            cout << " Num de paginas del proximo nuevo proceso: " << PagN;
         }
 
         //Impresion del proceso en ejecucion
@@ -540,7 +593,7 @@ int main(){
                     PObjProc->CambiarError(BanderaError);
                     BanderaError = false;
 
-                    LiberarPaginas(Memoria, ObjProc.RegresaID());
+                    //LiberarPaginas(Memoria, ObjProc.RegresaID());
                 }
 
                 if (PObjProc->RegresaTiempoTrans() < PObjProc->RegresaTiempo() && PObjProc->RegresaError() != true){
@@ -590,6 +643,8 @@ int main(){
                     ObjSig = AuxiliarEjec->RegresaLiga();
                     ObjProc = AuxiliarEjec->RegresaInfo();
 
+                    EspaciosLL = EspaciosLL - PObjProc->RegresaTamanio();
+                    EspaciosVas = EspaciosVas + PObjProc->RegresaTamanio();
                     LiberarPaginas(Memoria, ObjProc.RegresaID());
 
                     ListaListos.EliminaUnNodo(ObjProc);
