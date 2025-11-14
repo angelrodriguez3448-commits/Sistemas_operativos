@@ -9,36 +9,41 @@
 	</File>
 	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9079" topLine="109" />
+			<Cursor1 position="29380" topLine="401" />
 		</Cursor>
 		<Folding>
 			<Collapse line="15" />
 			<Collapse line="58" />
-			<Collapse line="153" />
+			<Collapse line="103" />
+			<Collapse line="120" />
+			<Collapse line="165" />
 			<Collapse line="212" />
-			<Collapse line="214" />
-			<Collapse line="220" />
-			<Collapse line="231" />
-			<Collapse line="270" />
-			<Collapse line="276" />
-			<Collapse line="282" />
-			<Collapse line="392" />
-			<Collapse line="422" />
-			<Collapse line="432" />
-			<Collapse line="446" />
-			<Collapse line="456" />
-			<Collapse line="503" />
-			<Collapse line="614" />
+			<Collapse line="227" />
+			<Collapse line="229" />
+			<Collapse line="235" />
+			<Collapse line="246" />
+			<Collapse line="285" />
+			<Collapse line="291" />
+			<Collapse line="297" />
+			<Collapse line="316" />
+			<Collapse line="407" />
+			<Collapse line="437" />
+			<Collapse line="461" />
+			<Collapse line="483" />
+			<Collapse line="499" />
+			<Collapse line="518" />
+			<Collapse line="604" />
+			<Collapse line="629" />
 		</Folding>
 	</File>
 	<File name="Marco.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2405" topLine="93" />
+			<Cursor1 position="1074" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="Proceso.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2543" topLine="83" />
+			<Cursor1 position="680" topLine="11" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
