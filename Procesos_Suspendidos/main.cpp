@@ -700,9 +700,13 @@ int main(){
         if(ListaBloqueados.RegresaPrimero() != NULL && BanderaSuspendido != false){
             AuxiliarBloq = ListaBloqueados.RegresaPrimero();
             ObjProc = AuxiliarBloq->RegresaInfo();
-            proc_suspendidos.open("proc_suspendidos.txt", ios::app);
+            if(ProcS == 0){
+                proc_suspendidos.open("proc_suspendidos.txt", ios::out | ios::trunc); //Reinicia el archivo
+            } else{
+                proc_suspendidos.open("proc_suspendidos.txt", ios::app);
+            }
             if(!proc_suspendidos){
-                cout << "El archivo no se a creado\n";
+                cout << "El archivo no se ha creado\n";
             } else{
                 cout << "Suspendiendo proceso\n";
                 //Guardamos lo datos del proceso
@@ -716,7 +720,7 @@ int main(){
                     ObjProc.RegresaPaginas() << ' ' <<
                     ObjProc.RegresaUltimaPagi() << ' ' <<
                     ObjProc.RegresaTiempoTrans() << ' ' <<
-                    ObjProc.RegresaTiempoB() << ' ' <<
+                    //ObjProc.RegresaTiempoB() << ' ' <<
                     ObjProc.RegresaTiempoLl() << ' ' <<
                     ObjProc.RegresaTiempoR() << ' ' << endl;
 
@@ -728,6 +732,53 @@ int main(){
             }
             proc_suspendidos.close();
             BanderaSuspendido = false;
+        }
+
+        if(BanderaRegresa != false && ProcS != 0){
+            proc_suspendidos.open("proc_suspendidos.txt", ios::in);
+            Proceso Obj;
+            int IdS, PgS, UPS, TTrans, TLLS, TRS;
+            if(!proc_suspendidos){
+                cout << "El archivo no se ha creado\n";
+            } else{
+                cout << "Regresa proceso\n";
+                //Guardamos lo datos del proceso
+                proc_suspendidos >>
+                    IdS >>
+                    Oper >>
+                    Num1>>
+                    Num2 >>
+                    Tiemp >>
+                    Tam >>
+                    PgS >>
+                    UPS >>
+                    TTrans >>
+                    TLLS >>
+                    TRS;
+
+                cout << IdS;
+                Obj.CambiarID(IdS);
+                Obj.CambiarOp(Oper);
+                Obj.CambiarNum(1, Num1);
+                Obj.CambiarNum(2, Num2);
+                Obj.CambiarT(Tiemp);
+                Obj.CambiarTamanio(Tam);
+                Obj.CambiarPaginas(PgS);
+                Obj.CambiarUltimaPagi(UPS);
+                Obj.CambiarTiempo(TTrans);
+                Obj.CambiarTiempoLl(TLLS);
+                Obj.CambiarTiempoR(TRS);
+                if(AsignarPaginas(Memoria, Obj)){
+                    //Si se asignaron las paginas correctamente
+                    ListaListos.InsertaOrdenCrec(Obj);
+                    EspaciosLL = Obj.RegresaPaginas() + EspaciosLL;
+                    EspaciosVas = EspaciosVas - Obj.RegresaPaginas();
+                } else{
+                    cout << "No hay suficiente espacio en memoria\n"; //Salir del ciclo si no se pudieron asignar las paginas
+                }
+            }
+            proc_suspendidos.close();
+            BanderaRegresa = false;
         }
 
         //Procesos bloqueados
@@ -805,7 +856,7 @@ int main(){
         cout << "\nContador global: " << TiempG;
         cout << "\n";
         //system("pause");
-        sleep(4);
+        sleep(2);
 
     }while(Terminado == false);
     system("pause");

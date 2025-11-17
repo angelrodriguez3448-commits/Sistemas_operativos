@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1763338618 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\main.cpp
+	<iostream>
+	<unistd.h>
+	<cstdlib>
+	<cmath>
+	<stdlib.h>
+	<iomanip>
+	<ctime>
+	<conio.h>
+	<vector>
+	<fstream>
+	"Lista.h"
+	"Proceso.h"
+	"Marco.h"
+
+1757803296 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\lista.h
+	<iostream>
+
+1763332293 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\proceso.h
+	<iostream>
+	<cstring>
+	<stdlib.h>
+
+1762639119 c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\marco.h
+

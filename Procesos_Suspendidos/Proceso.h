@@ -36,8 +36,11 @@ public:
     ~Proceso();
 
     //Metodos para el manejo de los atributos
+    void CambiarOp(int);
     int RegresaOperador();
+    void CambiarNum(int, int); //Primer int para el indice y segundo int para el numero
     int RegresaNumero(int);
+    void CambiarT(int);
     int RegresaTiempo();
     int RegresaTiempoTrans();
     void CambiarTiempo(int);
@@ -107,17 +110,35 @@ Proceso::~Proceso(){
     // Destructor vacio
 }
 
+//Metodo que cambia el valor del atributo Operador
+void Proceso::CambiarOp(int ope) {
+    Operador = ope;
+}
+
 //Metodo que regresa el valor del atributo Operador
 int Proceso::RegresaOperador() {
     return Operador;
 }
 
-// M�todo que regresa el valor de alguno de los atributos Numero
+//Metodo que cambia el valor de los atributos Numero
+void Proceso::CambiarNum(int indice, int num) {
+     if (indice == 1)
+        Numero1 = num;
+    else
+        Numero2 = num;
+}
+
+//Metodo que regresa el valor de alguno de los atributos Numero
 int Proceso::RegresaNumero(int indice) {
     if (indice == 1)
         return Numero1;
     else
         return Numero2;
+}
+
+//Metodo que cambia el valor del atributo Tiempo
+void Proceso::CambiarT(int tiem) {
+    Tiempo = tiem;
 }
 
 //Metodo que regresa el valor del atributo Tiempo

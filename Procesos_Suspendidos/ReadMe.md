@@ -1,4 +1,4 @@
-# Practica de simulación de paginación simple
+# Practica de simulación de suspensión de procesos
 
 
 
@@ -17,3 +17,5 @@ Una vez indicado los datos anteriores la simulación empezara, se puede interact
 * N->Nuevo proceso.
 * B->Tabla de procesos (imprime el BCP de todos los procesos).
 * T->Tabla de páginas (imprime la matriz que representa la memoria).
+* S->Suspende proceso (saca de la memoria principal al primer procesos en la lista de Bloqueados).
+* R->Regresa proceso (regresa a un proceso de la memoria secundaria a la principal)
