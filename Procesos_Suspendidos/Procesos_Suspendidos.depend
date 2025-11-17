@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1763338618 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\main.cpp
+1763347366 source:c:\users\gavos\onedrive\documentos\universidad\quinto_semestre\sis_ope\procesos_suspendidos\main.cpp
 	<iostream>
 	<unistd.h>
 	<cstdlib>
@@ -8,7 +8,7 @@
 	<iomanip>
 	<ctime>
 	<conio.h>
-	<vector>
+	<string>
 	<fstream>
 	"Lista.h"
 	"Proceso.h"

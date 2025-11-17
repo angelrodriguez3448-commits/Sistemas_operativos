@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <ctime>
 #include <conio.h>
-#include <vector>
+#include <string>
 #include <fstream>
 #include "Lista.h"
 #include "Proceso.h"
@@ -83,9 +83,9 @@ void imprimirTiempos(Proceso ObjProc, int TG){
         cout << left << setw(16) << "x";
     }
     //Tiempo de espera
-    if(ObjProc.RegresaID() == 1){
+    /*if(ObjProc.RegresaID() == 1){
         cout << left << setw(16) << "0";
-    } else if(ObjProc.RegresaTiempoLl() < 0){
+    } else*/ if(ObjProc.RegresaTiempoLl() < 0){
         cout << left << setw(16) << "x";
     } else if(ObjProc.RegresaTiempoF() != 0){
         cout << left << setw(16) << (ObjProc.RegresaTiempoF() - ObjProc.RegresaTiempoLl()) - ObjProc.RegresaTiempoTrans();
@@ -256,7 +256,106 @@ void CambiarEstadoM(Marco Memoria[24][2], int Ubicacion[][2], int paginas, char 
     }
 }
 
+bool Guardar(Proceso ObjProc, const string archivo, bool Reiniciar){
+    ofstream proc_suspendidos; //Archivo logico
+    if(Reiniciar == true){
+        proc_suspendidos.open(archivo, ios::out | ios::trunc); //Reinicia el archivo
+    } else{
+        proc_suspendidos.open(archivo, ios::app);
+    }
+    if(!proc_suspendidos){
+        cout << "El archivo no se ha creado\n";
+        return false;
+    } else{
+        //cout << "Suspendiendo proceso\n";
+        //Guardamos lo datos del proceso
+        proc_suspendidos <<
+            ObjProc.RegresaID() << ' ' <<
+            ObjProc.RegresaOperador() << ' ' <<
+            ObjProc.RegresaNumero(1) << ' ' <<
+            ObjProc.RegresaNumero(2) << ' ' <<
+            ObjProc.RegresaTiempo() << ' ' <<
+            ObjProc.RegresaTamanio() << ' ' <<
+            ObjProc.RegresaPaginas() << ' ' <<
+            ObjProc.RegresaUltimaPagi() << ' ' <<
+            ObjProc.RegresaTiempoTrans() << ' ' <<
+            //ObjProc.RegresaTiempoB() << ' ' <<
+            ObjProc.RegresaTiempoLl() << ' ' <<
+            ObjProc.RegresaTiempoR() << ' ' << endl;
+    }
+    proc_suspendidos.close();
+    return true;
+}
 
+Proceso Recuperar(const string archivo){
+    ifstream proc_suspendidos; //Archivo logico
+    proc_suspendidos.open("proc_suspendidos.txt", ios::in);
+    Proceso Obj;
+    string linea;
+
+    if(!proc_suspendidos){
+        cout << "El archivo no se ha creado\n";
+        return Obj;
+    }
+    if(!getline(proc_suspendidos, linea)){
+        cout << "Archivo vacio\n";
+        return Obj;
+    }
+
+    stringstream linea_flujo(linea);
+    int IdS, Oper, Num1, Num2, Tiemp, Tam, PgS, UPS, TTrans, TLLS, TRS;
+
+    //cout << "Regresa proceso\n";
+    //Guardamos lo datos del proceso
+    linea_flujo >>
+        IdS >>
+        Oper >>
+        Num1>>
+        Num2 >>
+        Tiemp >>
+        Tam >>
+        PgS >>
+        UPS >>
+        TTrans >>
+        TLLS >>
+        TRS;
+
+    Obj.CambiarID(IdS);
+    Obj.CambiarOp(Oper);
+    Obj.CambiarNum(1, Num1);
+    Obj.CambiarNum(2, Num2);
+    Obj.CambiarT(Tiemp);
+    Obj.CambiarTamanio(Tam);
+    Obj.CambiarPaginas(PgS);
+    Obj.CambiarUltimaPagi(UPS);
+    Obj.CambiarTiempo(TTrans);
+    Obj.CambiarTiempoLl(TLLS);
+    Obj.CambiarTiempoR(TRS);
+    Obj.CambiarTiempoF(0);
+    return Obj;
+}
+
+void CopiarMenosPrimero(const string archivo){
+    ifstream in(archivo);
+    ofstream out("temp.txt");
+
+    string linea;
+    bool salto = false;
+
+    while(getline(in, linea)){
+        if(!salto){
+            salto = true; //Saltar el primer registro
+            continue;
+        }
+        out << linea << endl;
+    }
+
+    in.close();
+    out.close();
+
+    remove(archivo.c_str());
+    rename("temp.txt", archivo.c_str());
+}
 
 int main(){
     cout << "--Simulador de paginacion simple--\n\n";
@@ -278,6 +377,7 @@ int main(){
     Id = 0;
     int NumProcs, i, j, interrupcion, EspaciosLL, EspaciosVas, ProcTer, ProcR, ProcS, IdN, PagN, TiempG, Quantum; //Variables usadas en el ciclo principal
     float ResulProc;
+    string archivo = "proc_suspendidos.txt";
     srand(time(NULL));
     bool NuevoVacio;
     bool BanderaError = false;
@@ -285,6 +385,7 @@ int main(){
     bool BanderaSuspendido = false;
     bool BanderaRegresa = false;
     bool Terminado = false;
+    bool Reiniciar = false;
     bool SO;
 
     fstream proc_suspendidos; //Archivo logico
@@ -598,7 +699,13 @@ int main(){
             cout << "\tId del proximo nuevo proceso: " << IdN;
             cout << " Num de paginas del proximo nuevo proceso: " << PagN;
         }
+
         cout << "\nProcesos Suspendidos: " << ProcS;
+        if(ProcS != 0){
+            ObjProc = Recuperar(archivo);
+            cout << "\tId del proximo proceso a regresar: " << ObjProc.RegresaID();
+            cout << " Num de paginas del procimo proceso a regresar: " << ObjProc.RegresaPaginas();
+        }
 
         //Impresion del proceso en ejecucion
         cout << "\nPorceso en ejecucion\n";
@@ -700,84 +807,35 @@ int main(){
         if(ListaBloqueados.RegresaPrimero() != NULL && BanderaSuspendido != false){
             AuxiliarBloq = ListaBloqueados.RegresaPrimero();
             ObjProc = AuxiliarBloq->RegresaInfo();
-            if(ProcS == 0){
-                proc_suspendidos.open("proc_suspendidos.txt", ios::out | ios::trunc); //Reinicia el archivo
-            } else{
-                proc_suspendidos.open("proc_suspendidos.txt", ios::app);
-            }
-            if(!proc_suspendidos){
-                cout << "El archivo no se ha creado\n";
-            } else{
-                cout << "Suspendiendo proceso\n";
-                //Guardamos lo datos del proceso
-                proc_suspendidos <<
-                    ObjProc.RegresaID() << ' ' <<
-                    ObjProc.RegresaOperador() << ' ' <<
-                    ObjProc.RegresaNumero(1) << ' ' <<
-                    ObjProc.RegresaNumero(2) << ' ' <<
-                    ObjProc.RegresaTiempo() << ' ' <<
-                    ObjProc.RegresaTamanio() << ' ' <<
-                    ObjProc.RegresaPaginas() << ' ' <<
-                    ObjProc.RegresaUltimaPagi() << ' ' <<
-                    ObjProc.RegresaTiempoTrans() << ' ' <<
-                    //ObjProc.RegresaTiempoB() << ' ' <<
-                    ObjProc.RegresaTiempoLl() << ' ' <<
-                    ObjProc.RegresaTiempoR() << ' ' << endl;
 
+            if(ProcS == 0){
+                Reiniciar = true;
+            } else {
+                Reiniciar = false;
+            }
+            if(Guardar(ObjProc, archivo, Reiniciar)){
                 LiberarPaginas(Memoria, ObjProc.RegresaID());
                 EspaciosLL = EspaciosLL - ObjProc.RegresaTamanio();
                 EspaciosVas = EspaciosVas + ObjProc.RegresaTamanio();
                 ListaBloqueados.EliminaUnNodo(ObjProc);
                 ProcS++;
             }
-            proc_suspendidos.close();
             BanderaSuspendido = false;
         }
 
+        //Regresa proceso
         if(BanderaRegresa != false && ProcS != 0){
-            proc_suspendidos.open("proc_suspendidos.txt", ios::in);
-            Proceso Obj;
-            int IdS, PgS, UPS, TTrans, TLLS, TRS;
-            if(!proc_suspendidos){
-                cout << "El archivo no se ha creado\n";
+            ObjProc = Recuperar(archivo);
+            if(AsignarPaginas(Memoria, ObjProc)){
+                //Si se asignaron las paginas correctamente
+                ListaListos.InsertaFinal(ObjProc);
+                EspaciosLL = ObjProc.RegresaPaginas() + EspaciosLL;
+                EspaciosVas = EspaciosVas - ObjProc.RegresaPaginas();
+                ProcS--;
+                CopiarMenosPrimero(archivo);
             } else{
-                cout << "Regresa proceso\n";
-                //Guardamos lo datos del proceso
-                proc_suspendidos >>
-                    IdS >>
-                    Oper >>
-                    Num1>>
-                    Num2 >>
-                    Tiemp >>
-                    Tam >>
-                    PgS >>
-                    UPS >>
-                    TTrans >>
-                    TLLS >>
-                    TRS;
-
-                cout << IdS;
-                Obj.CambiarID(IdS);
-                Obj.CambiarOp(Oper);
-                Obj.CambiarNum(1, Num1);
-                Obj.CambiarNum(2, Num2);
-                Obj.CambiarT(Tiemp);
-                Obj.CambiarTamanio(Tam);
-                Obj.CambiarPaginas(PgS);
-                Obj.CambiarUltimaPagi(UPS);
-                Obj.CambiarTiempo(TTrans);
-                Obj.CambiarTiempoLl(TLLS);
-                Obj.CambiarTiempoR(TRS);
-                if(AsignarPaginas(Memoria, Obj)){
-                    //Si se asignaron las paginas correctamente
-                    ListaListos.InsertaOrdenCrec(Obj);
-                    EspaciosLL = Obj.RegresaPaginas() + EspaciosLL;
-                    EspaciosVas = EspaciosVas - Obj.RegresaPaginas();
-                } else{
-                    cout << "No hay suficiente espacio en memoria\n"; //Salir del ciclo si no se pudieron asignar las paginas
-                }
+                cout << "No hay suficiente espacio en memoria\n";
             }
-            proc_suspendidos.close();
             BanderaRegresa = false;
         }
 
