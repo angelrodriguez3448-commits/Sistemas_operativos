@@ -357,8 +357,54 @@ void CopiarMenosPrimero(const string archivo){
     rename("temp.txt", archivo.c_str());
 }
 
+void ImprimirPorcesosSuspendidos(const string archivo, int TG){
+    ifstream proc_suspendidos; //Archivo logico
+    proc_suspendidos.open("proc_suspendidos.txt", ios::in);
+
+    if(!proc_suspendidos){
+        cout << "El archivo no se ha creado\n";
+        return;
+    }
+
+    int IdS, Oper, Num1, Num2, Tiemp, Tam, PgS, UPS, TTrans, TLLS, TRS;
+
+    while(proc_suspendidos >>
+            IdS >>
+            Oper >>
+            Num1>>
+            Num2 >>
+            Tiemp >>
+            Tam >>
+            PgS >>
+            UPS >>
+            TTrans >>
+            TLLS >>
+            TRS){
+        Proceso Obj;
+
+        Obj.CambiarID(IdS);
+        Obj.CambiarOp(Oper);
+        Obj.CambiarNum(1, Num1);
+        Obj.CambiarNum(2, Num2);
+        Obj.CambiarT(Tiemp);
+        Obj.CambiarTamanio(Tam);
+        Obj.CambiarPaginas(PgS);
+        Obj.CambiarUltimaPagi(UPS);
+        Obj.CambiarTiempo(TTrans);
+        Obj.CambiarTiempoLl(TLLS);
+        Obj.CambiarTiempoR(TRS);
+        Obj.CambiarTiempoF(0);
+
+        imprimirDatos(Obj);
+        cout << left << setw(10) << "Suspendido";
+        imprimirTiempos(Obj, TG);
+    }
+    proc_suspendidos.close();
+    return;
+}
+
 int main(){
-    cout << "--Simulador de paginacion simple--\n\n";
+    cout << "--Simulador de procesos suspendidos--\n\n";
     Marco Memoria [24][2];
     Lista<Proceso> ListaNuevos;
     Lista<Proceso> ListaListos;
@@ -580,7 +626,10 @@ int main(){
                     AuxiliarBCP = AuxiliarBCP->RegresaLiga();
                 }
 
-                // 4 Procesos terminados
+                // 4 Procesos suspendidos
+                ImprimirPorcesosSuspendidos(archivo, TiempG);
+
+                // 5 Procesos terminados
                 AuxiliarBCP = ListaTerminados.RegresaPrimero();
                 while (AuxiliarBCP != NULL) {
                     ObjProc = AuxiliarBCP->RegresaInfo();
